@@ -30,7 +30,6 @@ def markBlock(img, pt, bs, height, width):
         return 0
     return 1
 
-
 def mapToImage(m, sizex, sizey):
     img = np.zeros((sizey, sizex, 3), np.int8)
     for x in range(sizex):
@@ -78,7 +77,7 @@ def generateMap(img, radius):
     #ret, thresh = cv2.threshold(gray, 85, 255, cv2.THRESH_BINARY_INV)
     #ret, thresh = cv2.threshold(gray, 150, 255, cv2.THRESH_BINARY)
 
-    ret, thresh = cv2.threshold(gray, 150, 255, cv2.THRESH_BINARY)
+    ret, thresh = cv2.threshold(gray, 200, 255, cv2.THRESH_BINARY)
 
 #    plt.imshow(thresh)
 #    plt.show()
@@ -98,11 +97,14 @@ def generateMap(img, radius):
 #    plt.show()
     
     new_radius = int(radius / 20)
+    print("Robot radius: {}".format(radius))
     for c in conts:
-        if cv2.contourArea(c) < math.pi * radius:
-            continue
+        color = (255, 0, 0)
         rect = cv2.minAreaRect(c)
-        rect = expandBoxes(rect, radius)
+        if cv2.contourArea(c) < math.pi * radius:
+            color = (0, 0, 0)
+        else:
+            rect = expandBoxes(rect, radius)
         box = cv2.boxPoints(rect)
         box= np.int0(box)
         #rect = cv2.boundingRect(c)

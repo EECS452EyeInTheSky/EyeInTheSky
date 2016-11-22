@@ -181,7 +181,7 @@ class Graph:
 #        while cur.pos[0] != self.finish[0] and cur.pos[1] != self.finish[1]:
         while cur.prev != None:
             path.append(cur.pos)
-            print("We can reach {} via {}".format(cur.pos, cur.prev.pos))
+   #         print("We can reach {} via {}".format(cur.pos, cur.prev.pos))
             cur = cur.prev    
         end = time.time()
         print("Duration for path finding: {}".format(end - startTime))

@@ -21,11 +21,15 @@ class Formatter(object):
         z = self.im.get_array()[int(y), int(x)]
         return 'x={:.01f}, y={:,01f, z={:,01f}'.format(x, y, z)
     
-def detectRobot(img):
+def detectRobot(img, y_low=0, y_high=None, x_low=0, x_high=None):
    # img = cv2.imread('robot.jpg')
 ##    img = cv2.GaussianBlur(img, (5,5), 0)
 
-    height, width, channels = img.shape
+    if y_high == None:
+        y_high, _, _ = img.shape
+    if x_high == None:
+        _, x_high, _ = img.shape
+#    height, width, channels = img.shape
 
 #    dummy = redest(img, 0, height, 0, width)
 #
@@ -35,28 +39,27 @@ def detectRobot(img):
 #    end = time.time()
 #    print("Total duration (old): {}".format(end - start))
 
-    start = time.time()
-    (r_pt, g_pt) = redAndGreenDetection(img, 0, height, 0, width)
-    end = time.time()
-    print("Total duration (new): {}".format(end - start))
+#    (r_pt, g_pt) = redAndGreenDetection(img, 0, height, 0, width)
+    (r_pt, g_pt) = redAndGreenDetection(img, y_low, y_high, x_low, x_high)
     
     print("Green point is at: {}".format(g_pt))
     print("Red Point is at: {}".format(r_pt))
     pos = ((g_pt[0] + r_pt[0]) / 2, (g_pt[1] + r_pt[1]) / 2)
+    diam = math.sqrt((g_pt[0]-r_pt[0])**2 + (g_pt[1]-r_pt[1])**2) * 1.5
     if g_pt[0] == r_pt[0]:
         ang = 0
     else:
         ang = math.atan((g_pt[1]-r_pt[1])/(g_pt[0]-r_pt[0]))
-#    plt.imshow(img)
-#    plt.show()
+    plt.imshow(img)
+    plt.show()
     #img = removeRobot(img, g_pt, r_pt, pos)
     img = removeRobotCircle(img, g_pt, r_pt, pos)
-    return (img, pos, ang)
+    return (img, pos, ang, diam)
 
 def removeRobot(img, g_pt, r_pt, pos):
     start = time.time()
     global diam
-    diam = math.sqrt((g_pt[0]-r_pt[0])**2 + (g_pt[1]-r_pt[1])**2) * 1.35
+#    diam = math.sqrt((g_pt[0]-r_pt[0])**2 + (g_pt[1]-r_pt[1])**2) * 1.5
     #print(diam)
     x_low =int(pos[0] - diam/2)
     x_high = int(pos[0] + diam/2)
@@ -118,7 +121,10 @@ if __name__ == '__main__':
 #    plt.show()
     img = cv2.GaussianBlur(img, (11,11), 0)
 
-    (img, pos, ang) = detectRobot(img)
+    robotStart = time.time()
+    (img, pos, ang, diam) = detectRobot(img)
+    robotEnd = time.time()
+    print("Robot detection duration: {}".format(robotEnd - robotStart))
     
     # Not cool. Change later
     pos = (int(pos[0] / 20), int(pos[1] / 20))
@@ -130,7 +136,10 @@ if __name__ == '__main__':
     
     print ("The robot's center is at {} with diameter of {}".format(pos, diam))
     #print("The size of m is {}".format(len(m)), len(m[0]))
+    pathStart = time.time()
     path = findPath(m, pos, (70, 10), int(diam/40))
+    pathEnd = time.time()
+    print("Path finding total duration: {}".format(pathEnd - pathStart))
     end = time.time()
     print("Total duration for whole thing: {}".format(end - start))
     for p in path:

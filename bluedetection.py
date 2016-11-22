@@ -27,7 +27,7 @@ import math
 #    return findStrongestColor(img, x_low, x_high, y_low, y_high, color, skipCount = 5)
 
 def bluest(img, x_low, x_high, y_low, y_high):
-#print(img.shape)
+    print("Searching in range x={} - {} and y={} - {}".format(x_low, x_high, y_low, y_high))
     x_low = int(x_low)
     x_high = int(x_high)
     y_low = int(y_low)
@@ -103,6 +103,7 @@ def greenest(img, x_low, x_high, y_low, y_high):
                  count = count + 1
 # Old color: 80 200 0
                  olda = abs(img[greenx,greeny] - [80, 200, 0])
+#                 olda = abs(img[greenx,greeny] - [80, 200, 0])
                  old = olda[0]+olda[1]+olda[2]
                  newa = abs(img[x,y] - [80, 200, 0])
                  new = newa[0]+newa[1]+newa[2]
@@ -127,7 +128,7 @@ def redAndGreenDetection(img, x_low, x_high, y_low, y_high):
         for y in range(y_low, y_high, 10):
             b, g, r = img[x, y]
             if g > b and g > r:
-                newa = abs(img[x, y] - [80, 200, 0])
+                newa = abs(img[x, y] - [200, 200, 150])
                 new = newa[0] + newa[1] + newa[2]
                 if new < old_g:
                     old_g = new
@@ -144,16 +145,34 @@ def redAndGreenDetection(img, x_low, x_high, y_low, y_high):
     gp = (gp[1], gp[0])
     return (rp, gp)
 
-def transform(img):
+def findCorners(img):
     start = time.time()
     height, width, channels = img.shape
     #print (width, height)
     factor = 5
     upper_left =  bluest(img, 0,            height/factor,   0,         width/factor)
-    bottom_left = bluest(img, height/factor,     height,     0,         width/factor)
-    upper_right = bluest(img, 0,            height/factor,   width/factor,   width)
-    bottom_right = bluest(img, height/factor,    height,     width/factor,   width)
+    bottom_left = bluest(img, height - int(height/factor),     height,     0,         width/factor)
+    upper_right = bluest(img, 0,            height/factor,   width - int(width/factor),   width)
+    bottom_right = bluest(img, height - int(height/factor),    height,     width-(width/factor),   width)
     end = time.time()
+    print("Corner detection took {} seconds".format(end - start))
+    return (upper_left, bottom_left, upper_right, bottom_right)
+
+def transform(img, corners=None):
+    if corners == None:
+        upper_left, bottom_left, upper_right, bottom_right = findCorners(img)
+    else:
+        upper_left, bottom_left, upper_right, bottom_right = corners
+#    start = time.time()
+#    height, width, channels = img.shape
+#    #print (width, height)
+#    factor = 5
+#    upper_left =  bluest(img, 0,            height/factor,   0,         width/factor)
+#    bottom_left = bluest(img, height - int(height/factor),     height,     0,         width/factor)
+#    upper_right = bluest(img, 0,            height/factor,   width - int(width/factor),   width)
+#    bottom_right = bluest(img, height - int(height/factor),    height,     width-(width/factor),   width)
+#    end = time.time()
+#    return (upper_left, bottom_left, upper_right, bottom_right)
 
     ##for x in range(0, img.shape[0], 10):
     ##     print(x)
@@ -179,11 +198,14 @@ def transform(img):
 #    plt.imshow(img)
 #    plt.show()
     
+    transformStart = time.time()
+    height, width, channels = img.shape
     orig_pts = np.float32([upper_right, upper_left, bottom_left, bottom_right])
     new_pts = np.float32([(width, 0), (0, 0), (0, height), (width, height)])
     M = cv2.getPerspectiveTransform(orig_pts, new_pts)
     new_img = cv2.warpPerspective(img, M, (1600, 1200))
-    print("Corner Detection duration: {}".format(end - start))
+    transformEnd = time.time()
+    print("Transform duration: {}".format(transformEnd - transformStart))
     #cv2.imwrite('robot.jpg', new_img)
     #print("Transformed image")
     #plt.imshow(new_img)
