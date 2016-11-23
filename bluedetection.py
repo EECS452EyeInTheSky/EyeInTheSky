@@ -128,7 +128,7 @@ def redAndGreenDetection(img, x_low, x_high, y_low, y_high):
         for y in range(y_low, y_high, 10):
             b, g, r = img[x, y]
             if g > b and g > r:
-                newa = abs(img[x, y] - [200, 200, 150])
+                newa = abs(img[x, y] - [80, 200, 0])
                 new = newa[0] + newa[1] + newa[2]
                 if new < old_g:
                     old_g = new
@@ -139,17 +139,19 @@ def redAndGreenDetection(img, x_low, x_high, y_low, y_high):
                 if new < old_r:
                     old_r = new
                     rp = (x, y)
-    print ("green pixel values: {}".format(img[gp[0], gp[1]]))
-    print ("red pixel values: {}".format(img[rp[0], rp[1]]))
+    #print ("green pixel values: {}".format(img[gp[0], gp[1]]))
+    #print ("red pixel values: {}".format(img[rp[0], rp[1]]))
     rp = (rp[1], rp[0])
     gp = (gp[1], gp[0])
+    #print("Green point location: {}".format(gp))
+    #print("Red point location: {}".format(rp))
     return (rp, gp)
 
 def findCorners(img):
     start = time.time()
     height, width, channels = img.shape
     #print (width, height)
-    factor = 5
+    factor = 4
     upper_left =  bluest(img, 0,            height/factor,   0,         width/factor)
     bottom_left = bluest(img, height - int(height/factor),     height,     0,         width/factor)
     upper_right = bluest(img, 0,            height/factor,   width - int(width/factor),   width)
@@ -190,10 +192,10 @@ def transform(img, corners=None):
     ##                 bluey = y
 
     #print(bluex, bluey)
-    print("Upper left: {} ({})".format(upper_left, img[upper_left[1],upper_left[0]]))
-    print("Upper right: {} ({})".format(upper_right, img[upper_right[1], upper_right[0]]))
-    print("Bottom left: {} ({})".format(bottom_left, img[bottom_left[1],bottom_left[0]]))
-    print("Bottom right: {} ({})".format(bottom_right, img[bottom_right[1], bottom_right[0]]))
+    #print("Upper left: {} ({})".format(upper_left, img[upper_left[1],upper_left[0]]))
+    #print("Upper right: {} ({})".format(upper_right, img[upper_right[1], upper_right[0]]))
+    #print("Bottom left: {} ({})".format(bottom_left, img[bottom_left[1],bottom_left[0]]))
+    #print("Bottom right: {} ({})".format(bottom_right, img[bottom_right[1], bottom_right[0]]))
 #    print("Image for checking:")
 #    plt.imshow(img)
 #    plt.show()
@@ -205,7 +207,7 @@ def transform(img, corners=None):
     M = cv2.getPerspectiveTransform(orig_pts, new_pts)
     new_img = cv2.warpPerspective(img, M, (1600, 1200))
     transformEnd = time.time()
-    print("Transform duration: {}".format(transformEnd - transformStart))
+    #print("Transform duration: {}".format(transformEnd - transformStart))
     #cv2.imwrite('robot.jpg', new_img)
     #print("Transformed image")
     #plt.imshow(new_img)

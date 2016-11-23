@@ -11,7 +11,10 @@ from generatemap import generateMap
 from generatemap import mapToImage
 #from pathfinding import findPath
 from pathfinding2 import findPath
+import os
+import subprocess
 
+#counter = 0;
 diam = 0
 
 class Formatter(object):
@@ -42,16 +45,17 @@ def detectRobot(img, y_low=0, y_high=None, x_low=0, x_high=None):
 #    (r_pt, g_pt) = redAndGreenDetection(img, 0, height, 0, width)
     (r_pt, g_pt) = redAndGreenDetection(img, y_low, y_high, x_low, x_high)
     
-    print("Green point is at: {}".format(g_pt))
-    print("Red Point is at: {}".format(r_pt))
+#    print("Green point is at: {}".format(g_pt))
+#    print("Red Point is at: {}".format(r_pt))
     pos = ((g_pt[0] + r_pt[0]) / 2, (g_pt[1] + r_pt[1]) / 2)
     diam = math.sqrt((g_pt[0]-r_pt[0])**2 + (g_pt[1]-r_pt[1])**2) * 1.5
     if g_pt[0] == r_pt[0]:
         ang = 0
     else:
-        ang = math.atan((g_pt[1]-r_pt[1])/(g_pt[0]-r_pt[0]))
-    plt.imshow(img)
-    plt.show()
+        ang = math.atan2((g_pt[1]-r_pt[1]),(g_pt[0]-r_pt[0]))
+        ang = 180 * ang / math.pi
+#    plt.imshow(img)
+#    plt.show()
     #img = removeRobot(img, g_pt, r_pt, pos)
     img = removeRobotCircle(img, g_pt, r_pt, pos)
     return (img, pos, ang, diam)
@@ -80,17 +84,22 @@ def removeRobot(img, g_pt, r_pt, pos):
     #plt.imshow(img)
     #plt.show()
     end = time.time()
-    print("Time to remove robot: {}".format(end - start))
+#    print("Time to remove robot: {}".format(end - start))
     return img 
 
 def removeRobotCircle(img, g_pt, r_pt, pos):
     start = time.time()
+
+#    if (counter = 0)
+#      #os(sudo rfcomm connect /dev/rfcomm0 $MAC)
+#      subprocess.check_output('sudo', 'rfcomm', 'connect', '/dev/rfcomm0 $MAC')
+#      counter = counter + 1
     global diam
     pos = (int(pos[0]), int(pos[1]))
     diam = math.sqrt((g_pt[0]-r_pt[0])**2 + (g_pt[1]-r_pt[1])**2) * 1.35
     cv2.circle(img, pos, int(diam/2), [0, 0, 0], cv2.FILLED)
     end = time.time()
-    print("Time to remove robot: {}".format(end - start))
+#    print("Time to remove robot: {}".format(end - start))
     return img
     
 if __name__ == '__main__':
@@ -106,7 +115,7 @@ if __name__ == '__main__':
     rawCapture = PiRGBArray(camera)
     camera.capture(rawCapture, format="bgr")
     img = rawCapture.array
-    #cv2.imwrite('/home/pi/mat.png', img)
+    cv2.imwrite('/home/pi/mat.png', img)
 #    img = cv2.imread('/home/pi/best_course.png')
 ##    print("Raw image")
 ##    plt.imshow(img)
@@ -144,7 +153,103 @@ if __name__ == '__main__':
     print("Total duration for whole thing: {}".format(end - start))
     for p in path:
         m[p[0]][p[1]] = 2
+        
     mapToImage(m, len(m), len(m[0]))
+
+
+    #  custom control of robot
+   
+##    (r2, g2) = redAndGreenDetection(img, y_low, y_high, x_low, x_high)
+##    
+##    print("Green point is at: {}".format(g2))
+##    print("Red Point is at: {}".format(r2))
+##    pos = ((g2[0] + r2[0]) / 2, (g2[1] + r2[1]) / 2)
+    
+##    (_, curr_pos, curr_ang,_) = detectRobot(img) 
+##    #output next position
+##    for p in path
+##       #if((m[p[0]][p[1]]) == 2)
+##         next_pos[0] = p[0]
+##         next_pos[1] = p[1]
+##         (_, curr_pos, curr_ang,_) = detectRobot(img)
+##         if next_pos[0] == r_pt[0]:
+##           next_angle = 0
+##          else:
+##           next_angle = math.atan((g_pt[1]-r_pt[1])/(g_pt[0]-r_pt[0]))
+##         if((next_pos[1]!=curr_pos[1]) && (next_pos[0]!=curr_pos[0]):
+##          while(next_angle!=curr_angle)
+##               if((next_ang-curr_ang)<0):
+##                  subprocess.check_output('echo', '\'r\'', '/dev/rfcomm0\')
+##                  sleep(0.1)
+##               elif((next_ang-curr_ang)>0):
+##                  subprocess.check_output('echo', ''l'', '/dev/rfcomm0\')
+##                  sleep(0.1)
+##          subprocess.check_output('echo', ''F'', '/dev/rfcomm0\')
+##          (_, curr_pos, curr_ang,_) = detectRobot(img)
+##          sleep(0.1)
+##
+##
+##    #next pos and next ang
+##
+##    # do changes in the position 
+##
+##    #(_, curr_pos, curr_ang,_) = detectRobot(img)
+##    #compare current position with the actual position
+##    #(_, next_pos, next_ang,_) = detectRobot(img)
+####    if((next_pos[1]!=curr_pos[1]) && (next_pos[0]!=curr_pos[0]):
+####          while(next_angle!=curr_angle)
+####               if((next_ang-curr_ang)<0):
+####                  subprocess.check_output('echo', '\'r\'', '/dev/rfcomm0\')
+####                  sleep(0.1)
+####               elif((next_ang-curr_ang)>0):
+####                  subprocess.check_output('echo', ''l'', '/dev/rfcomm0\')
+####                  sleep(0.1)
+####          subprocess.check_output('echo', ''F'', '/dev/rfcomm0\')
+####          (_, curr_pos, curr_ang,_) = detectRobot(img)
+####          sleep(0.1)
+##          
+####       if(((next_pos[1]-currpos[1])>0) && ((next_pos[0]-currpos[0])>0):
+####          if(next_angle == curr_angle)):
+####            subprocess.check_output('echo', ''B'', '/dev/rfcomm0\')
+####            sleep(0.1)
+####          elif(next_angle - curr_angle = 180):
+####            subprocess.check_output('echo', ''F'', '/dev/rfcomm0\')
+####            sleep(0.1)
+##       
+##
+##       
+####          subprocess.check_output('echo', ''r'', '/dev/rfcomm0\')
+####          sleep(0.2)
+##          
+##
+##    
+####    if (next_pos != curr_pos):
+####       if((next_pos[1]-currpos[1])>0):
+####          while(next_pos[1]!=curr_pos[1])
+####            if(next_ang!=curr_ang):
+####              if((next_ang-curr_ang)<0):
+##                  subprocess.check_output('echo', '\'r\'', '/dev/rfcomm0\')
+####               sleep(0.1)
+####              else:
+####               subprocess.check_output('echo', ''a'', '/dev/rfcomm0\')
+####               sleep(0.1)
+####            elif ((next_pos!=curr_pos) && (next_angle == curr_angle)):
+####               subprocess.check_output('echo', ''w'', '/dev/rfcomm0\')
+####               sleep(0.1)
+####            elif ((next_pos!=curr_pos) && (next_angle - curr_angle = 180)):
+####               subprocess.check_output('echo', ''s'', '/dev/rfcomm0\')
+####               sleep(0.1)
+##             
+##          # d = right turn, a = left turn   w go forward   s go backward
+##          # using another keyboard "game keys" for robot movement
+##
+##
+##    #connect to hc 06 module
+##    #echo 'F' > /dev/rfcomm0\
+##    (_, pos, ang,_) = detectRobot(img)
+##    subprocess.check_output('echo', ''F'', '/dev/rfcomm0\')
+    
+    
     #print("The path is: {}".format(path))
 ###low_red = np.array([0, 0, 90])
 ###upper_red = np.array([80, 80, 255])
