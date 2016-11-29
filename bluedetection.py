@@ -115,6 +115,70 @@ def greenest(img, x_low, x_high, y_low, y_high):
     print("green pixel values {}".format(img[greenx,greeny]))
     return (greeny, greenx)
 
+#def yellowest(img, x_low, x_high, y_low, y_high):
+##print(img.shape)
+#    count = 0
+#    x_low = int(x_low)
+#    x_high = int(x_high)
+#    y_low = int(y_low)
+#    y_high = int(y_high)
+#    yp = (0, 0)
+#    old = 9999
+#    for x in range(x_low, x_high, 5):
+# #        print(x)
+#         for y in range(y_low, y_high, 5):
+#
+#              print("{}".format((x, y)))
+#              b, g, r = img[x,y]
+#
+#              if g>b and g>r:
+#                 count = count + 1
+## Old color: 80 200 0
+#                 #olda = abs(img[yellowx,yellowy] - [100, 210, 220])
+##                 olda = abs(img[greenx,greeny] - [80, 200, 0])
+#                 #old = olda[0]+olda[1]+olda[2]
+#                 newa = abs(img[x,y] - [70, 180, 180])
+#                 new = newa[0]+newa[1]+newa[2]
+#                 if new < old:
+#                     old = new
+#                     yp = (x, y)
+##                     yellowx = x
+##                     yellowy = y
+#
+##    print("Count is {}".format(count))
+#    print("Yellow pixels at: {}".format(yp))
+#    plt.imshow(img)
+#    plt.show()
+#    print("Yellow pixel values {}".format(img[yp[0], yp[1]]))
+#    return (yp[1], yp[0])
+
+def yellowest(img, x_low, x_high, y_low, y_high):
+    x_low = int(x_low)
+    x_high = int(x_high)
+    y_low = int(y_low)
+    y_high = int(y_high)
+    yp = (0, 0)
+    old= 9999
+    for x in range(x_low, x_high, 10):
+        for y in range(y_low, y_high, 10):
+            b, g, r = img[x, y]
+            #if y > b and y > r:
+            newa = abs(img[x, y] - [70, 180, 180])
+            new = newa[0] + newa[1] + newa[2]
+            if new < old:
+                old = new
+                yp = (x, y)
+                #print ("green pixel values: {}".format(img[gp[0], gp[1]]))
+    #print ("red pixel values: {}".format(img[rp[0], rp[1]]))
+    #print("Yellow point location: {}".format(yp))
+    #print("Yellow pixel values: {}".format(img[yp[0], yp[1]]))
+    #plt.imshow(img)
+    #plt.show()
+    yp = (yp[1], yp[0])
+    #print("Green point location: {}".format(gp))
+    #print("Red point location: {}".format(rp))
+    return yp
+
 def redAndGreenDetection(img, x_low, x_high, y_low, y_high):
     x_low = int(x_low)
     x_high = int(x_high)

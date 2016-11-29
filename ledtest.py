@@ -10,20 +10,20 @@ camera = picamera.PiCamera()
 #exit()
 ##camera.shutter_speed=1500
 camera.start_preview()
-sleep(60)
+sleep(2)
 camera.stop_preview()
-exit()
+#exit()
 #camera.stop_preview()
 rawCapture = PiRGBArray(camera)
 camera.capture(rawCapture, format="bgr")
 img = rawCapture.array
-#cv2.imwrite('/home/pi/best_course.png', img)
+cv2.imwrite('/home/pi/yellow_test.png', img)
 exit()
-##img = cv2.imread('/home/pi/green_test.png')
-plt.imshow(img)
-plt.show()
-for x in range(590, 600):
-    for y in range(590, 600):
-        val = img[y,x]
-        print("{}".format(val))
+####img = cv2.imread('/home/pi/green_test.png')
+##plt.imshow(img)
+##plt.show()
+##for x in range(590, 600):
+##    for y in range(590, 600):
+##        val = img[y,x]
+##        print("{}".format(val))
             

@@ -1,7 +1,7 @@
 import cv2
 import numpy as np
 import matplotlib.pyplot as plt
-from bluedetection import redest, greenest, bluest, transform, redAndGreenDetection
+from bluedetection import redest, greenest, bluest, transform, redAndGreenDetection, yellowest
 import picamera
 import math
 from picamera.array import PiRGBArray
@@ -59,6 +59,14 @@ def detectRobot(img, y_low=0, y_high=None, x_low=0, x_high=None):
     #img = removeRobot(img, g_pt, r_pt, pos)
     img = removeRobotCircle(img, g_pt, r_pt, pos)
     return (img, pos, ang, diam)
+
+def detectTarget(img, y_low=0, y_high = None, x_low=0, x_high=None):
+    if y_high == None:
+        y_high, _, _ = img.shape
+    if x_high == None:
+        _, x_high, _ = img.shape
+    target = yellowest(img, y_low, y_high, x_low, x_high)
+    return target
 
 def removeRobot(img, g_pt, r_pt, pos):
     start = time.time()
