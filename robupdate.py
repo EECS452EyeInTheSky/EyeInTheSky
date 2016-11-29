@@ -136,13 +136,13 @@ def moveTurn():
 #        print("Target Position: {}".format(targetPos))
         if (diffAng < 0):
             moveRobot('R')
-            time.sleep(0.07)
+            time.sleep(0.1)
             moveRobot('S')
         else:
             moveRobot('L')
-            time.sleep(0.07)
+            time.sleep(0.1)
             moveRobot('S') 
-        time.sleep(0.03)
+        #time.sleep(0.03)
         diffAng = curAng - targetAng 
         if diffAng > 180:
             diffAng = diffAng - 360
@@ -217,9 +217,9 @@ def moveRobotForward():
 #                    if time.time() - angleUpdateTime > 0.1:
 #                        angleUpdateTime = time.time()
 #                        moveForwardAngle()
-                    time.sleep(0.09)
+                    time.sleep(0.1)
                     moveRobot('S')
-                    time.sleep(0.01)
+                    #time.sleep(0.01)
 
              #print("*****************************FOUND POINT***********************************")                
                     #moveForwardAngle()
@@ -378,9 +378,26 @@ def threadLoop():
 	
         img = transform(img, curCorners)
         detectTimeStart = time.time()
-        (img, curPos, curAng, curDiam) = detectRobot(img)
+        if curPos == None:
+            (img, curPos, curAng, curDiam) = detectRobot(img)
+        else:
+            
+                
+            (img, curPos, curAng, curDiam) = detectRobot(img, yL, yH, xL, xH)
+        xL = curPos[0] - 150
+        xH = curPos[0] + 150
+        yL = curPos[1] - 150
+        yH = curPos[1] + 150
+        if(xL<0):
+                xL = 0
+        if(yL<0):
+                yL = 0
+        if(yH>=1200):
+                yH = 1200
+        if(xH>= 1600):
+                xH = 1600
         detectTimeEnd = time.time()
-#        print("Robot detection took {}".format(detectTimeEnd - detectTimeStart))
+        print("Robot detection took {}".format(detectTimeEnd - detectTimeStart))
         
         curImage = img
         curPos = (int(curPos[0] / 20), int(curPos[1] / 20))
