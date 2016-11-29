@@ -48,7 +48,7 @@ def detectRobot(img, y_low=0, y_high=None, x_low=0, x_high=None):
 #    print("Green point is at: {}".format(g_pt))
 #    print("Red Point is at: {}".format(r_pt))
     pos = ((g_pt[0] + r_pt[0]) / 2, (g_pt[1] + r_pt[1]) / 2)
-    diam = math.sqrt((g_pt[0]-r_pt[0])**2 + (g_pt[1]-r_pt[1])**2) * 1.5
+    diam = math.sqrt((g_pt[0]-r_pt[0])**2 + (g_pt[1]-r_pt[1])**2) * 2.5
     if g_pt[0] == r_pt[0]:
         ang = 0
     else:
@@ -96,7 +96,7 @@ def removeRobotCircle(img, g_pt, r_pt, pos):
 #      counter = counter + 1
     global diam
     pos = (int(pos[0]), int(pos[1]))
-    diam = math.sqrt((g_pt[0]-r_pt[0])**2 + (g_pt[1]-r_pt[1])**2) * 1.35
+    diam = math.sqrt((g_pt[0]-r_pt[0])**2 + (g_pt[1]-r_pt[1])**2) * 2.5
     cv2.circle(img, pos, int(diam/2), [0, 0, 0], cv2.FILLED)
     end = time.time()
 #    print("Time to remove robot: {}".format(end - start))

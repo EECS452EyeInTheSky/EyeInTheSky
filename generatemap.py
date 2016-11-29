@@ -63,6 +63,7 @@ def expandBoxes(rect, radius):
             
     
 def generateMap(img, radius):
+    radius = radius * 20
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
     #Resize the image
@@ -96,15 +97,16 @@ def generateMap(img, radius):
 #    plt.imshow(withoutExpansion)
 #    plt.show()
     
-    new_radius = int(radius / 20)
+    #new_radius = int(radius / 20)
     print("Robot radius: {}".format(radius))
     for c in conts:
         color = (255, 0, 0)
         rect = cv2.minAreaRect(c)
-        if cv2.contourArea(c) < math.pi * radius:
-            color = (0, 0, 0)
-        else:
-            rect = expandBoxes(rect, radius)
+#        if cv2.contourArea(c) < math.pi * radius:
+#            color = (0, 0, 0)
+#        else:
+#            rect = expandBoxes(rect, radius)
+        rect = expandBoxes(rect, radius)
         box = cv2.boxPoints(rect)
         box= np.int0(box)
         #rect = cv2.boundingRect(c)
