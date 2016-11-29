@@ -9,6 +9,7 @@ import picamera
 from picamera.array import PiRGBArray
 from pathfinding2 import findPath
 from generatemap import generateMap, mapToImage
+from rdp import rdp
 import threading
 
 curPos = None
@@ -331,11 +332,16 @@ def threadMapping():
            print("The target point: {}".format(targetPoint))
 
            pathStart = time.time()
-           targetPath = findPath(m, curPos, targetPoint, int(curDiam/40))
+           rawTargetPath = findPath(m, curPos, targetPoint, int(curDiam/40))
            pathEnd = time.time()
            print("Path finding duration: {}".format(pathEnd - pathStart))          
 
-           for p in targetPath:
+           rdpStart = time.time()
+           targetPath = rdp(rawTargetPath)
+           rdpEnd = time.time()
+           print("RDP duration: {}".format(rdpEnd - rdpStart))
+            
+           for p in rawTargetPath:
                 m[p[0]][p[1]] = 2
            mapToImage(m, len(m), len(m[0]))
             
