@@ -128,7 +128,7 @@ def redAndGreenDetection(img, x_low, x_high, y_low, y_high):
         for y in range(y_low, y_high, 10):
             b, g, r = img[x, y]
             if g > b and g > r:
-                newa = abs(img[x, y] - [80, 200, 0])
+                newa = abs(img[x, y] - [120, 170, 85])
                 new = newa[0] + newa[1] + newa[2]
                 if new < old_g:
                     old_g = new

@@ -5,7 +5,7 @@ import cv2
 
 camera = picamera.PiCamera()
 camera.resolution = (1600, 1200)
-#camera.start_preview()
+camera.start_preview()
 camera.capture('test_image.jpg')
-#time.sleep(60)
+time.sleep(60)
 exit()
