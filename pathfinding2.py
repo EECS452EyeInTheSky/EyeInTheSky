@@ -111,6 +111,7 @@ class Graph:
         self.start = pos
         self.finish = finish
         self.searchNodes = []
+        mapToImage(m,len(m),len(m[0]))
 
         print("Generating nodes...")
         for x in range(self.Mx):

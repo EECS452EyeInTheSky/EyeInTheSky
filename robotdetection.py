@@ -45,8 +45,8 @@ def detectRobot(img, y_low=0, y_high=None, x_low=0, x_high=None):
 #    (r_pt, g_pt) = redAndGreenDetection(img, 0, height, 0, width)
     (r_pt, g_pt) = redAndGreenDetection(img, y_low, y_high, x_low, x_high)
     
-#    print("Green point is at: {}".format(g_pt))
-#    print("Red Point is at: {}".format(r_pt))
+    print("Green point is at: {}".format(g_pt))
+    print("Red Point is at: {}".format(r_pt))
     pos = ((g_pt[0] + r_pt[0]) / 2, (g_pt[1] + r_pt[1]) / 2)
     diam = math.sqrt((g_pt[0]-r_pt[0])**2 + (g_pt[1]-r_pt[1])**2) * 2.5
     if g_pt[0] == r_pt[0]:
@@ -54,8 +54,8 @@ def detectRobot(img, y_low=0, y_high=None, x_low=0, x_high=None):
     else:
         ang = math.atan2((g_pt[1]-r_pt[1]),(g_pt[0]-r_pt[0]))
         ang = 180 * ang / math.pi
-#    plt.imshow(img)
-#    plt.show()
+    #plt.imshow(img)
+    #plt.show()
     #img = removeRobot(img, g_pt, r_pt, pos)
     img = removeRobotCircle(img, g_pt, r_pt, pos)
     return (img, pos, ang, diam)
@@ -66,7 +66,11 @@ def detectTarget(img, y_low=0, y_high = None, x_low=0, x_high=None):
     if x_high == None:
         _, x_high, _ = img.shape
     target = yellowest(img, y_low, y_high, x_low, x_high)
-    return target
+    global diam
+##    while diam==0:
+##        sleep(0.1)
+    cv2.circle(img, target, int(diam/2), [0, 0, 0], cv2.FILLED)
+    return (img, target)
 
 def removeRobot(img, g_pt, r_pt, pos):
     start = time.time()

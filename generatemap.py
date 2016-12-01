@@ -63,14 +63,15 @@ def expandBoxes(rect, radius):
             
     
 def generateMap(img, radius):
+    
     radius = radius * 20
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
     #Resize the image
 #    smallGray = cv2.resize(img, None, fx = 0.05, fy = 0.05, interpolation = cv2.INTER_AREA)
 #    print("Small gray image")
-#    plt.imshow(smallGray)
-#    plt.show()
+    plt.imshow(gray)
+    plt.show()
 
 #    plt.imshow(gray)
 #    print("Grayscale image:")
@@ -80,8 +81,8 @@ def generateMap(img, radius):
 
     ret, thresh = cv2.threshold(gray, 200, 255, cv2.THRESH_BINARY)
 
-#    plt.imshow(thresh)
-#    plt.show()
+    #plt.imshow(thresh)
+    #plt.show()
     _, conts, hierarchy = cv2.findContours(thresh, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
 #    withoutExpansion = thresh.copy()
 #    for c in conts:
@@ -99,6 +100,7 @@ def generateMap(img, radius):
     
     #new_radius = int(radius / 20)
     print("Robot radius: {}".format(radius))
+    
     for c in conts:
         color = (255, 0, 0)
         rect = cv2.minAreaRect(c)
@@ -106,7 +108,7 @@ def generateMap(img, radius):
 #            color = (0, 0, 0)
 #        else:
 #            rect = expandBoxes(rect, radius)
-        rect = expandBoxes(rect, radius)
+        rect = expandBoxes(rect, int(radius*1.5))
         box = cv2.boxPoints(rect)
         box= np.int0(box)
         #rect = cv2.boundingRect(c)
@@ -114,6 +116,8 @@ def generateMap(img, radius):
         #cv2.rectangle(thresh, (x,y), (x+w, y+h), 255, cv2.FILLED)
         cv2.drawContours(thresh, [box], 0, (255,0,0), cv2.FILLED)
 
+    #plt.imshow(thresh)
+    #plt.show()
     M = cv2.resize(thresh, None, fx = 0.05, fy = 0.05, interpolation = cv2.INTER_AREA)
     height, width = M.shape
     m = [ [0 for y in range(height)] for x in range(width)]

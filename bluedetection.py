@@ -164,6 +164,7 @@ def yellowest(img, x_low, x_high, y_low, y_high):
             b, g, r = img[x, y]
             #if y > b and y > r:
             newa = abs(img[x, y] - [70, 180, 180])
+ #           newa = abs(img[x, y] - [220, 100, 60])   
             new = newa[0] + newa[1] + newa[2]
             if new < old:
                 old = new
@@ -193,12 +194,14 @@ def redAndGreenDetection(img, x_low, x_high, y_low, y_high):
             b, g, r = img[x, y]
             if g > b and g > r:
                 newa = abs(img[x, y] - [120, 170, 85])
+ #               newa = abs(img[x, y] - [115, 130, 100]) 
                 new = newa[0] + newa[1] + newa[2]
                 if new < old_g:
                     old_g = new
                     gp = (x, y)
             elif r > b and r > g:
                 newa = abs(img[x, y] - [0, 0, 255])
+ #               newa = abs(img[x, y] - [170, 90, 90])
                 new = newa[0] + newa[1] + 2*newa[2]
                 if new < old_r:
                     old_r = new
