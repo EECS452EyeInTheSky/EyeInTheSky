@@ -70,8 +70,8 @@ def generateMap(img, radius):
     #Resize the image
 #    smallGray = cv2.resize(img, None, fx = 0.05, fy = 0.05, interpolation = cv2.INTER_AREA)
 #    print("Small gray image")
-    plt.imshow(gray)
-    plt.show()
+#    plt.imshow(gray)
+#    plt.show()
 
 #    plt.imshow(gray)
 #    print("Grayscale image:")

@@ -111,7 +111,7 @@ class Graph:
         self.start = pos
         self.finish = finish
         self.searchNodes = []
-        mapToImage(m,len(m),len(m[0]))
+        #mapToImage(m,len(m),len(m[0]))
 
         print("Generating nodes...")
         for x in range(self.Mx):
@@ -156,6 +156,9 @@ class Graph:
 #            print("Next node neighbors: {}".format(next.neighbors))
 #            self.nodes.remove(next)
             cur = self.findMinNode()
+            # If you cannot a path, return None
+            if cur == None:
+                return None
             self.searchNodes.remove(cur)
             cur.visited = True
 

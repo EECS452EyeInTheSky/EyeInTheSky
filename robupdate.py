@@ -32,12 +32,14 @@ def init_camera():
     camera = picamera.PiCamera()
     time.sleep(1)
     camera.resolution = (1600, 1200)
-    #camera.brightness = 60
+    camera.brightness = 51
+    camera.framerate = 10
+    camera.saturation = 100
     return camera
 
 def capture_image(camera):
     rawCapture = PiRGBArray(camera)
-    camera.capture(rawCapture, format="bgr", use_video_port=False)
+    camera.capture(rawCapture, format="bgr", use_video_port=True)
     img = rawCapture.array
     return img
 
@@ -124,13 +126,14 @@ def moveTurn():
 
     global curPos
     global targetPos
+    global targetPath
    
     diffAng = curAng - targetAng 
     if diffAng > 180:
         diffAng = diffAng - 360
     if diffAng < -180:
         diffAng = diffAng + 360
-    while abs(diffAng) >= 20 and (abs(curPos[0]-targetPos[0]) >= 3 or abs(curPos[1]-targetPos[1]) >= 3): #or diffAng <= -10):
+    while abs(diffAng) >= 15 and (abs(curPos[0]-targetPos[0]) >= 2 or abs(curPos[1]-targetPos[1]) >= 2): #or diffAng <= -10):
 #        print("Current Ang: {}".format(curAng))
 #        print("Target Ang: {}".format(targetAng))
 #        print("Diff Ang: {}".format(diffAng))
@@ -138,12 +141,12 @@ def moveTurn():
 #        print("Target Position: {}".format(targetPos))
         if (diffAng < 0):
             moveRobot('R')
-            time.sleep(0.1)
-            moveRobot('S')
+            time.sleep(0.01)
+            #moveRobot('S')
         else:
             moveRobot('L')
-            time.sleep(0.1)
-            moveRobot('S') 
+            time.sleep(0.01)
+            #moveRobot('S') 
         #time.sleep(0.2)
         diffAng = curAng - targetAng 
         if diffAng > 180:
@@ -209,7 +212,8 @@ def moveRobotForward():
              #print("Desired position a1: {}".format(b[1]))
 
              
-             while abs(curPos[0] - targetPos[0]) >= 3 or abs(curPos[1] - targetPos[1]) >= 3: 
+             while abs(curPos[0] - targetPos[0]) >= 2 or abs(curPos[1] - targetPos[1]) >= 2: 
+                    targetPos = (p[0], p[1])
 #                    print("Current position: {}".format(curPos))
 #                    print("Target position: {}".format(targetPos))
                     targetAng = math.atan2(targetPos[1]-curPos[1], targetPos[0]-curPos[0]) * 180 / math.pi                  
@@ -219,7 +223,7 @@ def moveRobotForward():
 #                    if time.time() - angleUpdateTime > 0.1:
 #                        angleUpdateTime = time.time()
 #                        moveForwardAngle()
-                    time.sleep(0.1)
+                    time.sleep(0.01)
                     moveRobot('S')
                     #time.sleep(0.01)
 
@@ -310,42 +314,70 @@ def threadMapping():
     global curImage
     global targetPath
 
+
+    showMap = True
+    rawTargetPoint = None
+
     lastMapTime = 0
+    m = None
     while curDiam == None:
         time.sleep(2)
     #print ("Target point: {}".format(targetPoint))
     while True:
-        if time.time() - lastMapTime > 6000:
+        if time.time() - lastMapTime > 60000:
            mapStart = time.time()
            
            targetStart = time.time()
-           img, rawTargetPoint = detectTarget(curImage)
+           if rawTargetPoint == None:
+               img, rawTargetPoint = detectTarget(curImage)
+           else:
+               img, rawTargetPoint = detectTarget(curImage, yL, yH, xL, xH)
+           xL = curPos[0] - 150
+           xH = curPos[0] + 150
+           yL = curPos[1] - 150
+           yH = curPos[1] + 150
+           if(xL<0):
+                   xL = 0
+           if(yL<0):
+                   yL = 0
+           if(yH>=1200):
+                   yH = 1200
+           if(xH>= 1600):
+                   xH = 1600
+
            targetEnd = time.time()
-           print("Target detection duration: {}".format(targetEnd - targetStart))
+#           print("Target detection duration: {}".format(targetEnd - targetStart))
            
-           m = generateMap(img, curDiam/40)
+           if m == None:
+               m = generateMap(img, curDiam/40)
+           if showMap:
+                mapToImage(m, len(m), len(m[0]))
+                showMap = False
            #mapToImage(m, len(m), len(m[0]))
            mapEnd = time.time()
-           print("Map generation duration: {}".format(mapEnd - mapStart))
+#           print("Map generation duration: {}".format(mapEnd - mapStart))
            #mapToImage(m, len(m), len(m[0]))
            #targetPoint = yellowest(img, )
            
            targetPoint = (int(rawTargetPoint[0]/20), int(rawTargetPoint[1]/20))
-           print("The target point: {}".format(targetPoint))
+#           print("The target point: {}".format(targetPoint))
 
            pathStart = time.time()
            rawTargetPath = findPath(m, curPos, targetPoint, int(curDiam/40))
+           if rawTargetPath == None:
+                sleep(1)
+                continue
            pathEnd = time.time()
-           print("Path finding duration: {}".format(pathEnd - pathStart))          
+#           print("Path finding duration: {}".format(pathEnd - pathStart))          
 
            rdpStart = time.time()
            targetPath = rdp(rawTargetPath, epsilon=1.0)
            rdpEnd = time.time()
-           print("RDP duration: {}".format(rdpEnd - rdpStart))
-            
+           #print("RDP duration: {}".format(rdpEnd - rdpStart))
+                
            for p in targetPath:
                 m[p[0]][p[1]] = 2
-           mapToImage(m, len(m), len(m[0]))
+           #mapToImage(m, len(m), len(m[0]))
             
 
            lastMapTime = time.time()
@@ -374,16 +406,20 @@ def threadLoop():
     pathTime = 0
     camera = init_camera()
     while True:
-##        captureTimeStart = time.time()
+        detectionTime = time.time()
+        
+        captureTimeStart = time.time()
         img = capture_image(camera)
-##        captureTimeEnd = time.time()
-##        print("Image capture took {}".format(captureTimeEnd - captureTimeStart))
+        captureTimeEnd = time.time()
+        print("Image capture took {}".format(captureTimeEnd - captureTimeStart))
 
         if curCorners == None:
             curCorners = findCorners(img)
 	
+        transTime = time.time()
         img = transform(img, curCorners)
-##        detectTimeStart = time.time()
+        print("Transformation took {}".format(time.time() - transTime))
+        detectTimeStart = time.time()
         if curPos == None:
             (img, curPos, curAng, curDiam) = detectRobot(img)
         else:
@@ -402,11 +438,12 @@ def threadLoop():
                 yH = 1200
         if(xH>= 1600):
                 xH = 1600
-##        detectTimeEnd = time.time()
-##        print("Robot detection took {}".format(detectTimeEnd - detectTimeStart))
+        detectTimeEnd = time.time()
+        print("Robot detection took {}".format(detectTimeEnd - detectTimeStart))
         
         curImage = img
         curPos = (int(curPos[0] / 20), int(curPos[1] / 20))
+        print("Robot detection Loop took {}".format(time.time() - detectionTime))
         #if targetPos != None:
         #    targetAng = atan2(targetPos[1]-curPos[1], targetPos[0]-curPos[0]) * 180 / math.pi
 #        if time.time() - pathTime >= 5:
@@ -471,10 +508,10 @@ if __name__ == '__main__':
             img = transform(img, corners)
         #    img = cv2.GaussianBlur(img, 
 
-            robotStart = time.time()
+#            robotStart = time.time()
             (img, pos, ang, diam) = detectRobot(img)
-            robotEnd = time.time()
-            print("Robot detection duration: {}".format(robotEnd - robotStart))
+#            robotEnd = time.time()
+#            print("Robot detection duration: {}".format(robotEnd - robotStart))
             
             smallPos = (int(pos[0] / 20), int(pos[1] / 20))
             mapStart = time.time()

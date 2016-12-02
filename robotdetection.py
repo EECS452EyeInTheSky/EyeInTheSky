@@ -45,8 +45,8 @@ def detectRobot(img, y_low=0, y_high=None, x_low=0, x_high=None):
 #    (r_pt, g_pt) = redAndGreenDetection(img, 0, height, 0, width)
     (r_pt, g_pt) = redAndGreenDetection(img, y_low, y_high, x_low, x_high)
     
-    print("Green point is at: {}".format(g_pt))
-    print("Red Point is at: {}".format(r_pt))
+#    print("Green point is at: {}".format(g_pt))
+#    print("Red Point is at: {}".format(r_pt))
     pos = ((g_pt[0] + r_pt[0]) / 2, (g_pt[1] + r_pt[1]) / 2)
     diam = math.sqrt((g_pt[0]-r_pt[0])**2 + (g_pt[1]-r_pt[1])**2) * 2.5
     if g_pt[0] == r_pt[0]:

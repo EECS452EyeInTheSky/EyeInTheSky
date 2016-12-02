@@ -4,6 +4,11 @@ import matplotlib.pyplot as plt
 import time
 import math
 
+BLUE   = [255,   0, 0]
+RED    = [0,     0, 255]
+GREEN  = [90,  150, 0]
+YELLOW = [0,   200, 150] 
+
 #def findStrongestColor(img, x_low, x_high, y_low, y_high, color, skipCount=5):
 #    x_low = int(x_low)
 #    x_high = int(x_high)
@@ -27,6 +32,7 @@ import math
 #    return findStrongestColor(img, x_low, x_high, y_low, y_high, color, skipCount = 5)
 
 def bluest(img, x_low, x_high, y_low, y_high):
+    global BLUE
     print("Searching in range x={} - {} and y={} - {}".format(x_low, x_high, y_low, y_high))
     x_low = int(x_low)
     x_high = int(x_high)
@@ -46,12 +52,15 @@ def bluest(img, x_low, x_high, y_low, y_high):
                  # new = img[x,y][0]/(img[x,y][0]+img[x,y][1]+img[x,y][2]+1)
                  #olda = abs(img[bluex,bluey] - [255,0,0])
                  #old = 2*olda[0]+olda[1]+olda[2]
-                 newa = abs(img[x,y] - [255, 0, 0])
+#                 newa = abs(img[x,y] - [255, 0, 0])
+                 newa = abs(img[x, y] - BLUE)
                  new = 2*newa[0]+newa[1]+newa[2]
                  if new < old:
                      old = new
                      bluex = x
                      bluey = y
+#    print("Blue detected at: {}".format((bluey, bluex)))
+#    print("Blue pixel values: {}".format(img[bluex, bluey]))
                      
     return (bluey, bluex)
 
@@ -153,6 +162,7 @@ def greenest(img, x_low, x_high, y_low, y_high):
 #    return (yp[1], yp[0])
 
 def yellowest(img, x_low, x_high, y_low, y_high):
+    global YELLOW
     x_low = int(x_low)
     x_high = int(x_high)
     y_low = int(y_low)
@@ -163,8 +173,8 @@ def yellowest(img, x_low, x_high, y_low, y_high):
         for y in range(y_low, y_high, 10):
             b, g, r = img[x, y]
             #if y > b and y > r:
-            newa = abs(img[x, y] - [70, 180, 180])
- #           newa = abs(img[x, y] - [220, 100, 60])   
+#            newa = abs(img[x, y] - [70, 180, 180])
+            newa = abs(img[x, y] - YELLOW)   
             new = newa[0] + newa[1] + newa[2]
             if new < old:
                 old = new
@@ -181,6 +191,8 @@ def yellowest(img, x_low, x_high, y_low, y_high):
     return yp
 
 def redAndGreenDetection(img, x_low, x_high, y_low, y_high):
+    global RED
+    global GREEN
     x_low = int(x_low)
     x_high = int(x_high)
     y_low = int(y_low)
@@ -193,14 +205,14 @@ def redAndGreenDetection(img, x_low, x_high, y_low, y_high):
         for y in range(y_low, y_high, 10):
             b, g, r = img[x, y]
             if g > b and g > r:
-                newa = abs(img[x, y] - [120, 170, 85])
- #               newa = abs(img[x, y] - [115, 130, 100]) 
-                new = newa[0] + newa[1] + newa[2]
-                if new < old_g:
+#                newa = abs(img[x, y] - [120, 170, 85])
+               newa = abs(img[x, y] - GREEN) 
+               new = newa[0] + newa[1] + newa[2]
+               if new < old_g:
                     old_g = new
                     gp = (x, y)
             elif r > b and r > g:
-                newa = abs(img[x, y] - [0, 0, 255])
+                newa = abs(img[x, y] - RED)
  #               newa = abs(img[x, y] - [170, 90, 90])
                 new = newa[0] + newa[1] + 2*newa[2]
                 if new < old_r:
