@@ -54,8 +54,8 @@ def detectRobot(img, y_low=0, y_high=None, x_low=0, x_high=None):
     else:
         ang = math.atan2((g_pt[1]-r_pt[1]),(g_pt[0]-r_pt[0]))
         ang = 180 * ang / math.pi
-    #plt.imshow(img)
-    #plt.show()
+#    plt.imshow(img)
+#    plt.show()
     #img = removeRobot(img, g_pt, r_pt, pos)
     img = removeRobotCircle(img, g_pt, r_pt, pos)
     return (img, pos, ang, diam)

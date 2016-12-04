@@ -12,12 +12,15 @@ camera.saturation = 100
 #camera.capture('/home/pi/green_test.png')
 #exit()
 ##camera.shutter_speed=1500
-camera.start_preview()
-sleep(0)
-camera.stop_preview()
+#camera.start_preview()
+#sleep(20)
+#camera.stop_preview()
+#exit()
 rawCapture = PiRGBArray(camera)
 camera.capture(rawCapture, format="bgr", use_video_port=True)
 img = rawCapture.array
+cv2.imwrite('/home/pi/red.png', img)
+exit()
 for i in range(0, 10):
     cv2.imwrite('/home/pi/Project/vid_image_{}.png'.format(i), img)
     sleep(2)
@@ -28,7 +31,7 @@ exit()
 rawCapture = PiRGBArray(camera)
 camera.capture(rawCapture, format="bgr")
 img = rawCapture.array
-cv2.imwrite('/home/pi/yellow_test.png', img)
+cv2.imwrite('/home/pi/red.png', img)
 exit()
 ####img = cv2.imread('/home/pi/green_test.png')
 ##plt.imshow(img)

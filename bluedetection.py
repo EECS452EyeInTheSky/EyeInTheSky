@@ -5,7 +5,7 @@ import time
 import math
 
 BLUE   = [255,   0, 0]
-RED    = [0,     0, 255]
+RED    = [80,     0, 255]
 GREEN  = [90,  150, 0]
 YELLOW = [0,   200, 150] 
 
@@ -41,9 +41,9 @@ def bluest(img, x_low, x_high, y_low, y_high):
     bluex = 0
     bluey = 0
     old = 9999
-    for x in range(x_low, x_high, 5):
+    for x in range(x_low, x_high, 2):
          #print(x)
-         for y in range(y_low, y_high, 5):
+         for y in range(y_low, y_high, 2):
 
               b, g, r = img[x,y]
 

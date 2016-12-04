@@ -114,6 +114,7 @@ class Graph:
         #mapToImage(m,len(m),len(m[0]))
 
         print("Generating nodes...")
+        nodeTime = time.time()
         for x in range(self.Mx):
             for y in range(self.My):
                 if m[x][y] == 1:
@@ -123,16 +124,17 @@ class Graph:
                     self.nodes.append(node)
                     self.nodeDict[(x, y)] = node
         self.searchNodes.append(self.findNode((self.finish)))
-        print("Finished generating nodes")
+        print("Finished generating nodes ({})".format(time.time()-nodeTime))
 
         #for node in self.nodes:
         #    if node.cost > 0:
     
 
         print("Assigning neighbors...")
+        neighTime = time.time()
         for node in self.nodes:
             node.assignNeighbors(self)
-        print("Finished assigning neighbors")
+        print("Finished assigning neighbors ({})".format(time.time()-neighTime))
 #        for node in self.nodes:
 #            if node.cost != None and math.isinf(node.cost) or m[node.pos[0]][node.pos[1]] == 1:
 #                self.nodes.remove(node)
@@ -181,6 +183,8 @@ class Graph:
 
         path = []
         cur = self.nodeDict[self.start]
+        if cur == None:
+            return None
 #        print("Cur is at {}".format(cur.pos))
 #        while cur.pos[0] != self.finish[0] and cur.pos[1] != self.finish[1]:
         while cur.prev != None:
@@ -192,6 +196,7 @@ class Graph:
         return path
     
     def findMinNode(self):
+
         minNode = None
 #        for node in self.nodes:
         for node in self.searchNodes:
