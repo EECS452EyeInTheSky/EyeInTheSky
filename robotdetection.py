@@ -66,6 +66,9 @@ def detectTarget(img, y_low=0, y_high = None, x_low=0, x_high=None):
     if x_high == None:
         _, x_high, _ = img.shape
     target = yellowest(img, y_low, y_high, x_low, x_high)
+#    print("Target is at {}".format(target))
+#    plt.imshow(img)
+#    plt.show()
     global diam
 ##    while diam==0:
 ##        sleep(0.1)

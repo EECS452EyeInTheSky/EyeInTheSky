@@ -40,7 +40,7 @@ def init_camera():
     camera = picamera.PiCamera()
     time.sleep(1)
     camera.resolution = (1600, 1200)
-    camera.brightness = 51
+    camera.brightness = 52
     camera.framerate = 10
     camera.saturation = 100
     rawCapture = PiRGBArray(camera)
@@ -426,9 +426,9 @@ def threadMapping():
            print("Target path: {}".format(targetPath))
            #print("RDP duration: {}".format(rdpEnd - rdpStart))
                 
-#           for p in targetPath:
-#                m[p[0]][p[1]] = 2
-           #mapToImage(m, len(m), len(m[0]))
+           for p in targetPath:
+                m[p[0]][p[1]] = 2
+           mapToImage(m, len(m), len(m[0]))
             
 
            lastMapTime = time.time()
@@ -510,7 +510,9 @@ def threadLoop():
         curImage = img
         curPos = (int(rawPos[0] / 20), int(rawPos[1] / 20))
         
-    
+        if curPos == (0, 0):
+            rawPos = None 
+
         imageLock.release()
 
 

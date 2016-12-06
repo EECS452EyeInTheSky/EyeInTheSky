@@ -6,20 +6,26 @@ import matplotlib.pyplot as plt
 
 
 camera = picamera.PiCamera()
-camera.brightness = 51
+camera.brightness = 52
 camera.framerate = 10
 camera.saturation = 100
+#camera.preview()
+#time.sleep(10)
+#camera.stop_preview()
+#exit()
 #camera.capture('/home/pi/green_test.png')
 #exit()
 ##camera.shutter_speed=1500
-#camera.start_preview()
-#sleep(20)
-#camera.stop_preview()
-#exit()
+camera.start_preview()
+sleep(2)
+camera.stop_preview()
+exit()
 rawCapture = PiRGBArray(camera)
 camera.capture(rawCapture, format="bgr", use_video_port=True)
 img = rawCapture.array
-cv2.imwrite('/home/pi/red.png', img)
+plt.imshow(img)
+plt.show()
+#cv2.imwrite('/home/pi/red.png', img)
 exit()
 for i in range(0, 10):
     cv2.imwrite('/home/pi/Project/vid_image_{}.png'.format(i), img)
