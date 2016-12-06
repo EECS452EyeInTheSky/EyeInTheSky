@@ -426,9 +426,9 @@ def threadMapping():
            print("Target path: {}".format(targetPath))
            #print("RDP duration: {}".format(rdpEnd - rdpStart))
                 
-           for p in targetPath:
-                m[p[0]][p[1]] = 2
-           mapToImage(m, len(m), len(m[0]))
+    #       for p in targetPath:
+    #            m[p[0]][p[1]] = 2
+    #       mapToImage(m, len(m), len(m[0]))
             
 
            lastMapTime = time.time()
@@ -483,11 +483,12 @@ def threadLoop():
     #        shown = True
         detectTimeStart = time.time()
         imageLock.acquire()
-        if rawPos == None:
-            (img, rawPos , curAng, curDiam) = detectRobot(img)
-        else:
-#            print("X-range: {}. Y-range: {}".format((xL, xH), (yL, yH)))
-            (img, rawPos, curAng, curDiam) = detectRobot(img, yL, yH, xL, xH)
+        (img, rawPos , curAng, curDiam) = detectRobot(img)
+#        if rawPos == None:
+#            (img, rawPos , curAng, curDiam) = detectRobot(img)
+#        else:
+##            print("X-range: {}. Y-range: {}".format((xL, xH), (yL, yH)))
+#            (img, rawPos, curAng, curDiam) = detectRobot(img, yL, yH, xL, xH)
         imageLock.release()
         print("Current position: {} Target Position: {}".format(rawPos, targetPoint))
         xL = rawPos[0] - 150

@@ -17,7 +17,7 @@ camera.saturation = 100
 #exit()
 ##camera.shutter_speed=1500
 camera.start_preview()
-sleep(2)
+sleep(10)
 camera.stop_preview()
 exit()
 rawCapture = PiRGBArray(camera)

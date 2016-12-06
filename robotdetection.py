@@ -13,9 +13,22 @@ from generatemap import mapToImage
 from pathfinding2 import findPath
 import os
 import subprocess
+from ctypes import *
 
 #counter = 0;
 diam = 0
+
+class Point(Structure):
+   _fields_ = [("x", c_uint), ("y", c_uint)] 
+
+class Pixel(Structure):
+    _fields_ = [("b", c_ubyte), ("g", c_ubyte), ("r", c_ubyte)]
+
+
+c_module = cdll.LoadLibrary('./c/test.so')
+c_module.c_redest.restype = Point
+c_module.c_greenest.restype = Point
+c_module.c_yellowest.restype = Point
 
 class Formatter(object):
     def __init__(self, im):
@@ -43,7 +56,12 @@ def detectRobot(img, y_low=0, y_high=None, x_low=0, x_high=None):
 #    print("Total duration (old): {}".format(end - start))
 
 #    (r_pt, g_pt) = redAndGreenDetection(img, 0, height, 0, width)
-    (r_pt, g_pt) = redAndGreenDetection(img, y_low, y_high, x_low, x_high)
+
+    #(r_pt, g_pt) = redAndGreenDetection(img, y_low, y_high, x_low, x_high)
+    r_pt = c_module.c_redest(img.ctypes.data_as(POINTER(c_ubyte)), 0, y_high, 0, x_high)
+    g_pt = c_module.c_greenest(img.ctypes.data_as(POINTER(c_ubyte)), 0, y_high, 0, x_high)
+    r_pt = (r_pt.x, r_pt.y)
+    g_pt = (g_pt.x, g_pt.y)
     
 #    print("Green point is at: {}".format(g_pt))
 #    print("Red Point is at: {}".format(r_pt))
@@ -65,10 +83,12 @@ def detectTarget(img, y_low=0, y_high = None, x_low=0, x_high=None):
         y_high, _, _ = img.shape
     if x_high == None:
         _, x_high, _ = img.shape
-    target = yellowest(img, y_low, y_high, x_low, x_high)
+    #target = yellowest(img, y_low, y_high, x_low, x_high)
+    raw_target = c_module.c_yellowest(img.ctypes.data_as(POINTER(c_ubyte)), 0, y_high, 0, x_high)
 #    print("Target is at {}".format(target))
 #    plt.imshow(img)
 #    plt.show()
+    target = (raw_target.x, raw_target.y)
     global diam
 ##    while diam==0:
 ##        sleep(0.1)

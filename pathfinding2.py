@@ -111,7 +111,7 @@ class Graph:
         self.start = pos
         self.finish = finish
         self.searchNodes = []
-        mapToImage(m,len(m),len(m[0]))
+#        mapToImage(m,len(m),len(m[0]))
 
         print("Generating nodes...")
         nodeTime = time.time()

@@ -3,6 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt 
 import time
 import math
+from ctypes import *
 
 BLUE   = [255,   0, 0]
 RED    = [80,     0, 255]
@@ -226,17 +227,55 @@ def redAndGreenDetection(img, x_low, x_high, y_low, y_high):
     #print("Red point location: {}".format(rp))
     return (rp, gp)
 
+class Point(Structure):
+   _fields_ = [("x", c_uint), ("y", c_uint)] 
+
+class Pixel(Structure):
+    _fields_ = [("b", c_ubyte), ("g", c_ubyte), ("r", c_ubyte)]
+
+
 def findCorners(img):
-    start = time.time()
     height, width, channels = img.shape
     #print (width, height)
     factor = 4
-    upper_left =  bluest(img, 0,            height/factor,   0,         width/factor)
-    bottom_left = bluest(img, height - int(height/factor),     height,     0,         width/factor)
-    upper_right = bluest(img, 0,            height/factor,   width - int(width/factor),   width)
-    bottom_right = bluest(img, height - int(height/factor),    height,     width-(width/factor),   width)
-    end = time.time()
-    print("Corner detection took {} seconds".format(end - start))
+
+
+    c_module = cdll.LoadLibrary('./c/test.so')
+    c_module.c_bluest.restype = Point
+
+    c_blue_time = time.time()
+#    print("Starting...")
+    c_upper_left = c_module.c_bluest(img.ctypes.data_as(POINTER(c_ubyte)), 0, int(height/factor), 0, int(width/factor))
+#    print("Found upper left")
+    c_bottom_left = c_module.c_bluest(img.ctypes.data_as(POINTER(c_ubyte)), int(height - height/factor), height,  0, int(width/factor))
+#    print("Found bottom left")
+    c_upper_right = c_module.c_bluest(img.ctypes.data_as(POINTER(c_ubyte)), 0, int(height/factor),  int(width - width/factor), int(width)) 
+#    print("Found upper_right")
+    c_bottom_right = c_module.c_bluest(img.ctypes.data_as(POINTER(c_ubyte)), int(height- int(height/factor)), int(height),  int(width - int(width/factor)), int(width)) 
+#    print("Found bottom right")
+    
+#    print("C: Upper left found at ({}, {})".format(c_upper_left.x, c_upper_left.y))
+#    print("C: Upper right found at ({}, {})".format(c_upper_right.x, c_upper_right.y))
+#    print("C: bottom left found at ({}, {})".format(c_bottom_left.x, c_bottom_left.y))
+#    print("C: bottom right found at ({}, {})".format(c_bottom_right.x, c_bottom_right.y))
+#    print("C: Corner detection took {}".format(time.time() - c_blue_time))
+
+#    plt.imshow(img)
+#    plt.show()
+
+
+    #start = time.time()
+    #upper_left =  bluest(img, 0,            height/factor,   0,         width/factor)
+    ##print("Upper left found at {}".format(upper_left))
+    #bottom_left = bluest(img, height - int(height/factor),     height,     0,         width/factor)
+    #upper_right = bluest(img, 0,            height/factor,   width - int(width/factor),   width)
+    #bottom_right = bluest(img, height - int(height/factor),    height,     width-(width/factor),   width)
+    #end = time.time()
+    #print("Corner detection took {} seconds".format(end - start))
+    upper_left = (c_upper_left.x, c_upper_left.y)
+    upper_right = (c_upper_right.x, c_upper_right.y)
+    bottom_left = (c_bottom_left.x, c_bottom_left.y)
+    bottom_right = (c_bottom_right.x, c_bottom_right.y)
     return (upper_left, bottom_left, upper_right, bottom_right)
 
 def transform(img, corners=None):
