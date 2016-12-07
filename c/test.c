@@ -24,8 +24,8 @@ typedef struct Point
 
 const Pixel BLUE    = { 255,    0,      0   };
 const Pixel RED     = { 80,     0,      255 };
-const Pixel GREEN   = { 90,     160,    0   };
-const Pixel YELLOW  = { 0,      200,    150 };
+const Pixel GREEN   = { 0,     200,    0   };
+const Pixel YELLOW  = { 0,      240,    255};
 
 int blue_pixel_difference(Pixel a, Pixel b)
 {

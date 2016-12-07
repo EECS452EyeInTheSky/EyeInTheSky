@@ -8,6 +8,7 @@ from robotdetection import detectRobot, detectTarget
 import picamera
 from picamera.array import PiRGBArray
 from pathfinding2 import findPath
+from pathfinding_c import findPath_c
 from generatemap import generateMap, mapToImage
 from rdp import rdp
 import threading
@@ -40,7 +41,7 @@ def init_camera():
     camera = picamera.PiCamera()
     time.sleep(1)
     camera.resolution = (1600, 1200)
-    camera.brightness = 52
+    camera.brightness = 50
     camera.framerate = 10
     camera.saturation = 100
     rawCapture = PiRGBArray(camera)
@@ -93,7 +94,7 @@ def moveRobot(c):
     global f
     if f == None or f.close:
         try:
-            f = open('/dev/rfcomm0', 'w')
+            f = open('/dev/rfcomm2', 'w')
         except Exception as e:
             print("Cannot open file: {}".format(e))
     f.write(c)
@@ -106,7 +107,7 @@ def moveForwardAngle():
 #    diffAng = curAng - targetAng
     diffAng = targetAng - curAng
     print("The diff ang is: {}".format(diffAng))
-    if diffAng > 10 or diffAng < -10:
+    if diffAng >5 or diffAng < -5:
         moveTurn()
 #        print("Moving to the right")
 #        moveRobot('r')
@@ -412,6 +413,7 @@ def threadMapping():
 
            pathStart = time.time()
            rawTargetPath = findPath(m, curPos, targetPoint, int(curDiam/40))
+#           rawTargetPath = findPath_c(m, curPos, targetPoint)
            if rawTargetPath == None or len(rawTargetPath) <= 1:
                 time.sleep(1)
                 print ("Failed to find a path to the target")
@@ -505,7 +507,7 @@ def threadLoop():
                 xH = 1600
         #print("X-range: {}. Y-range: {}".format((xL, xH), (yL, yH)))
         detectTimeEnd = time.time()
-        #print("Robot detection took {}".format(detectTimeEnd - detectTimeStart))
+        print("Robot detection took {}".format(detectTimeEnd - detectTimeStart))
         
         imageLock.acquire()
         curImage = img
@@ -628,6 +630,7 @@ if __name__ == '__main__':
             
             pathStart = time.time()
             path = findPath(m, smallPos, targetPoint, int(diam/40))
+            path = findPath(m, smallPos, targetPoint)
             pathEnd = time.time()
             print("Path finding duration: {}".format(pathEnd - pathStart))
             for p in path:

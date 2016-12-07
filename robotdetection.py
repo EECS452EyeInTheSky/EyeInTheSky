@@ -63,8 +63,8 @@ def detectRobot(img, y_low=0, y_high=None, x_low=0, x_high=None):
     r_pt = (r_pt.x, r_pt.y)
     g_pt = (g_pt.x, g_pt.y)
     
-#    print("Green point is at: {}".format(g_pt))
-#    print("Red Point is at: {}".format(r_pt))
+    #print("Green point is at: {}".format(g_pt))
+    #print("Red Point is at: {}".format(r_pt))
     pos = ((g_pt[0] + r_pt[0]) / 2, (g_pt[1] + r_pt[1]) / 2)
     diam = math.sqrt((g_pt[0]-r_pt[0])**2 + (g_pt[1]-r_pt[1])**2) * 2.5
     if g_pt[0] == r_pt[0]:
@@ -72,8 +72,8 @@ def detectRobot(img, y_low=0, y_high=None, x_low=0, x_high=None):
     else:
         ang = math.atan2((g_pt[1]-r_pt[1]),(g_pt[0]-r_pt[0]))
         ang = 180 * ang / math.pi
-#    plt.imshow(img)
-#    plt.show()
+    #plt.imshow(img)
+    #plt.show()
     #img = removeRobot(img, g_pt, r_pt, pos)
     img = removeRobotCircle(img, g_pt, r_pt, pos)
     return (img, pos, ang, diam)

@@ -74,65 +74,77 @@ typedef struct Graph
 	Point goal;
 } Graph;
 
+void free_graph(void * raw_graph)
+{
+    Graph * graph = (Graph *) raw_graph;
+    free(graph);
+}
+
+void free_path(Point * path)
+{
+    free(path);
+}
+
 void node_find_neighbors(Graph * graph, Node  * node)
 {
+    node->num_neighbors = 0;
 	/* Upper Left Corner */
 	if (node->position.x > 0 && node->position.y > 0)
 	{
 		node->neighbors[node->num_neighbors++] = & graph->nodes[PAIR_TO_INDEX(node->position.x - 1, node->position.y - 1)];
-//		printf("Found upper left neigh (%d, %d)\n", node->neighbors[node->num_neighbors-1]->position.x, node->neighbors[node->num_neighbors-1]->position.y);
+		//printf("Found upper left neigh (%d, %d)\n", node->neighbors[node->num_neighbors-1]->position.x, node->neighbors[node->num_neighbors-1]->position.y);
 	}
 
 	/* Left */
 	if (node->position.x > 0)
 	{
 		node->neighbors[node->num_neighbors++] = & graph->nodes[PAIR_TO_INDEX(node->position.x - 1, node->position.y)];
-////		printf("Found left neigh (%d, %d)\n", node->neighbors[node->num_neighbors-1]->position.x, node->neighbors[node->num_neighbors-1]->position.y);
+		//printf("Found left neigh (%d, %d)\n", node->neighbors[node->num_neighbors-1]->position.x, node->neighbors[node->num_neighbors-1]->position.y);
 	}
 
 	/* Bottom Left Corner */
 	if (node->position.x > 0 && node->position.y < NUM_ROW-1)
 	{
 		node->neighbors[node->num_neighbors++] =  & graph->nodes[PAIR_TO_INDEX(node->position.x - 1, node->position.y + 1)];
-////		printf("Found bottom left neigh (%d, %d)\n", node->neighbors[node->num_neighbors-1]->position.x, node->neighbors[node->num_neighbors-1]->position.y);
+		//printf("Found bottom left neigh (%d, %d)\n", node->neighbors[node->num_neighbors-1]->position.x, node->neighbors[node->num_neighbors-1]->position.y);
 	}
 
 	/* Down */
 	if (node->position.y < NUM_ROW-1)
 	{
 		node->neighbors[node->num_neighbors++] = & graph->nodes[PAIR_TO_INDEX(node->position.x, node->position.y + 1)];
-//		printf("Neighbor index: %d\n", PAIR_TO_INDEX(node->position.x, node->position.y + 1));
-//		printf("Found down neigh (%d, %d)\n", node->neighbors[node->num_neighbors-1]->position.x, node->neighbors[node->num_neighbors-1]->position.y);
+		//printf("Neighbor index: %d\n", PAIR_TO_INDEX(node->position.x, node->position.y + 1));
+		//printf("Found down neigh (%d, %d)\n", node->neighbors[node->num_neighbors-1]->position.x, node->neighbors[node->num_neighbors-1]->position.y);
 	}
 
 	/* Bottom Right Corner */
 	if (node->position.x < NUM_COL-1 && node->position.y < NUM_ROW-1)
 	{
 		node->neighbors[node->num_neighbors++] = & graph->nodes[PAIR_TO_INDEX(node->position.x + 1, node->position.y + 1)];
-//		printf("Found bottom right neigh (%d, %d)\n", node->neighbors[node->num_neighbors-1]->position.x, node->neighbors[node->num_neighbors-1]->position.y);
+		//printf("Found bottom right neigh (%d, %d)\n", node->neighbors[node->num_neighbors-1]->position.x, node->neighbors[node->num_neighbors-1]->position.y);
 	}
 
 	/* Right */
 	if (node->position.x < NUM_COL-1)
 	{
 		node->neighbors[node->num_neighbors++] = & graph->nodes[PAIR_TO_INDEX(node->position.x + 1, node->position.y)];
-//		printf("Found right neigh (%d, %d)\n", node->neighbors[node->num_neighbors-1]->position.x, node->neighbors[node->num_neighbors-1]->position.y);
+		//printf("Found right neigh (%d, %d)\n", node->neighbors[node->num_neighbors-1]->position.x, node->neighbors[node->num_neighbors-1]->position.y);
 	}
 
 	/* Upper Right Corner */
 	if (node->position.x < NUM_COL-1 && node->position.y > 0)
 	{
 		node->neighbors[node->num_neighbors++] = & graph->nodes[PAIR_TO_INDEX(node->position.x + 1, node->position.y - 1)];
-//		printf("Found upper right neigh (%d, %d)\n", node->neighbors[node->num_neighbors-1]->position.x, node->neighbors[node->num_neighbors-1]->position.y);
+		//printf("Found upper right neigh (%d, %d)\n", node->neighbors[node->num_neighbors-1]->position.x, node->neighbors[node->num_neighbors-1]->position.y);
 	}
 
 	/* upper */
 	if (node->position.y > 0)
 	{
 		node->neighbors[node->num_neighbors++] = & graph->nodes[PAIR_TO_INDEX(node->position.x, node->position.y - 1)];
-//		printf("Found upper neigh (%d, %d)\n", node->neighbors[node->num_neighbors-1]->position.x, node->neighbors[node->num_neighbors-1]->position.y);
+		//printf("Found upper neigh (%d, %d)\n", node->neighbors[node->num_neighbors-1]->position.x, node->neighbors[node->num_neighbors-1]->position.y);
 	}
-
+    //printf("Node {%d, %d) has %d neighbors\n", node->position.x, node->position.y, node->num_neighbors);
 }
 
 Node * graph_find_min_node(Graph * graph)
@@ -183,18 +195,18 @@ void * find_path(unsigned * map, Point start, Point finish)
 	size_t i;
 
 	// Initialize the nodes
-//	printf("Initializing the nodes...\n");
+	printf("Initializing the nodes...\n");
 	for (i = 0; i < NUM_NODES; i++)
 	{
 		Node node;
 		node.position = index_to_point(i);
-//		printf("Initializing node at (%d, %d)\n", node.position.x, node.position.y);
+		//printf("Initializing node at (%d, %d)\n", node.position.x, node.position.y);
 		node.cost = FLT_MAX;
 		node.heur = point_distance(node.position, graph->goal);
 		node.passable = map[i] == 1 ? FALSE : TRUE;
 		if ( ! node.passable )
 		{
-			printf("Node at (%d, %d) is not passable\n", node.position.x, node.position.y);
+			//printf("Node at (%d, %d) is not passable\n", node.position.x, node.position.y);
 		}
 		//printf("Node at %2d, %2d is %s\n", node.position.x, node.position.y, node.passable ? "PASSABLE" : "NOT PASSABLE");
 		node.visited = FALSE;
@@ -202,15 +214,17 @@ void * find_path(unsigned * map, Point start, Point finish)
 		graph->nodes[i] = node;
 	}
 	graph->nodes[POINT_TO_INDEX(start)].cost = 0;
-//	printf("DONE\n");
+	printf("DONE\n");
 
 //	printf("Finding neighbors...\n");
+    printf("Finding neighbors\n");
 	for (i = 0; i < NUM_NODES; i++)
 	{
 		node_find_neighbors(graph, &graph->nodes[i]);
 	}
-//	printf("Finding the min node...\n");
+	printf("Finding the min node...\n");
 	Node * cur = graph_find_min_node(graph);
+    printf("DONE\n");
 	if (cur == NULL)
 	{
 		printf("Failed to find a path!\n");
@@ -221,20 +235,21 @@ void * find_path(unsigned * map, Point start, Point finish)
 
 	while ( ! cur->visited )
 	{
-//		printf("Visiting node at (%2d, %2d) (%s) Has %ld neighbors\n", cur->position.x, cur->position.y, cur->visited ? "HAS BEEN VISITED" : "HAS NOT BEEN VISITED", cur->num_neighbors);
+		//printf("Visiting node at (%2d, %2d) (%s) Has %ld neighbors\n", cur->position.x, cur->position.y, cur->visited ? "HAS BEEN VISITED" : "HAS NOT BEEN VISITED", cur->num_neighbors);
 		for (i = 0; i < cur->num_neighbors; i++)
 		{
 			Node * neigh = cur->neighbors[i];
 			if ( ! neigh->passable )
 				continue;
-//			printf("Node (%d, %d) has neighbor (%d, %d)\n", cur->position.x, cur->position.y, neigh->position.x, neigh->position.y);
+			//printf("Node (%d, %d) has neighbor (%d, %d)", cur->position.x, cur->position.y, neigh->position.x, neigh->position.y);
 			if (cur->cost + point_distance(cur->position, neigh->position) < neigh->cost)
 			{
 //				printf("Setting node (%d, %d) previous to (%d, %d)\n", neigh->position.x, neigh->position.y, cur->position.x, cur->position.y);
 				neigh->cost = cur->cost + point_distance(cur->position, neigh->position);
 				neigh->prev = cur;
 			}
-		}
+            //printf("...DONE!\n");
+
 		if (	cur->position.x == graph->goal.x &&
 				cur->position.y == graph->goal.y 
 		   )

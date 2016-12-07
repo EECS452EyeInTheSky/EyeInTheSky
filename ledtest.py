@@ -9,12 +9,12 @@ camera = picamera.PiCamera()
 camera.brightness = 52
 camera.framerate = 10
 camera.saturation = 100
-#camera.preview()
-#time.sleep(10)
-#camera.stop_preview()
+camera.start_preview()
+sleep(1)
+camera.stop_preview()
 #exit()
-#camera.capture('/home/pi/green_test.png')
-#exit()
+camera.capture('/home/pi/yellow_test.png')
+exit()
 ##camera.shutter_speed=1500
 camera.start_preview()
 sleep(10)

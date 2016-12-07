@@ -237,7 +237,7 @@ class Pixel(Structure):
 def findCorners(img):
     height, width, channels = img.shape
     #print (width, height)
-    factor = 4
+    factor = 2
 
 
     c_module = cdll.LoadLibrary('./c/test.so')
@@ -315,8 +315,8 @@ def transform(img, corners=None):
     #print("Bottom left: {} ({})".format(bottom_left, img[bottom_left[1],bottom_left[0]]))
     #print("Bottom right: {} ({})".format(bottom_right, img[bottom_right[1], bottom_right[0]]))
 #    print("Image for checking:")
-#    plt.imshow(img)
-#    plt.show()
+    #plt.imshow(img)
+    #plt.show()
     
     transformStart = time.time()
     height, width, channels = img.shape
@@ -336,4 +336,4 @@ if __name__ == '__main__':
     img = cv2.imread('im4.jpg')
     bluex = 0
     bluey = 0
-    transform(img)
+    #transformoimg)
