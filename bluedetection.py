@@ -5,10 +5,10 @@ import time
 import math
 from ctypes import *
 
-BLUE   = [255,   0, 0]
-RED    = [80,     0, 255]
-GREEN  = [90,  150, 0]
-YELLOW = [0,   200, 150] 
+BLUE   = [255,   90, 0]
+RED    = [130,     40, 255]
+GREEN  = [100,  255, 100]
+YELLOW = [0,   215, 255] 
 
 #def findStrongestColor(img, x_low, x_high, y_low, y_high, color, skipCount=5):
 #    x_low = int(x_low)

@@ -6,11 +6,13 @@ import matplotlib.pyplot as plt
 
 
 camera = picamera.PiCamera()
-camera.brightness = 52
+camera.brightness = 50
 camera.framerate = 10
 camera.saturation = 100
+#camera.awb_mode = 'off'
+#camera.awb_gains = 1.7
 camera.start_preview()
-sleep(1)
+sleep(5)
 camera.stop_preview()
 #exit()
 camera.capture('/home/pi/yellow_test.png')

@@ -43,6 +43,8 @@ def init_camera():
     camera.resolution = (1600, 1200)
     camera.brightness = 50
     camera.framerate = 10
+    #camera.awb_mode = 'off'
+    #camera.awb_gains = 1.7
     camera.saturation = 100
     rawCapture = PiRGBArray(camera)
     return camera, rawCapture
@@ -94,7 +96,7 @@ def moveRobot(c):
     global f
     if f == None or f.close:
         try:
-            f = open('/dev/rfcomm2', 'w')
+            f = open('/dev/rfcomm1', 'w')
         except Exception as e:
             print("Cannot open file: {}".format(e))
     f.write(c)
@@ -106,7 +108,7 @@ def moveForwardAngle():
     
 #    diffAng = curAng - targetAng
     diffAng = targetAng - curAng
-    print("The diff ang is: {}".format(diffAng))
+#    print("The diff ang is: {}".format(diffAng))
     if diffAng >5 or diffAng < -5:
         moveTurn()
 #        print("Moving to the right")
@@ -147,6 +149,7 @@ def moveTurn():
         diffAng = diffAng - 360
     if diffAng < -180:
         diffAng = diffAng + 360
+#    print("Diff ANGLE : {}".format(diffAng))
     while abs(diffAng) >= 15 and (abs(curPos[0]-targetPos[0]) >= 2 or abs(curPos[1]-targetPos[1]) >= 2): #or diffAng <= -10):
 #        print("Current Ang: {}".format(curAng))
 #        print("Target Ang: {}".format(targetAng))
@@ -255,10 +258,10 @@ def moveRobotForward():
                     #        print("Replacing target point {} with new point {}".format(targetPos, targetPath[1]))
                     #        targetPath = targetPath[1:]
                     #        targetPos = targetPath[0]
-#                    print("Current position: {}".format(curPos))
+                    print("Current position: {}".format(curPos))
 #                    print("Target position: {}".format(targetPos))
                     targetAng = math.atan2(targetPos[1]-curPos[1], targetPos[0]-curPos[0]) * 180 / math.pi                  
-#                    print("Target angle: {}".format(targetAng))
+                    #print("Target angle: {}".format(targetAng))
                     moveRobot('F')
                     moveTurn()
 #                    if time.time() - angleUpdateTime > 0.1:
@@ -399,8 +402,7 @@ def threadMapping():
     #            mapToImage(m, len(m), len(m[0]))
     #            showMap = False
            imageLock.release()
-           #mapToImage(m, len(m), len(m[0]))
-           mapEnd = time.time()
+           #mapToImage(m, len(m), len(m[0])) mapEnd = time.time()
 #           print("Map generation duration: {}".format(mapEnd - mapStart))
            #mapToImage(m, len(m), len(m[0]))
            #targetPoint = yellowest(img, )
@@ -477,6 +479,8 @@ def threadLoop():
         transTime = time.time()
         imageLock.acquire()
         img = transform(img, curCorners)
+#        plt.imshow(img)
+#        plt.show()
         imageLock.release()
 #        print("Transformation took {}".format(time.time() - transTime))
     #    if not shown:
@@ -486,6 +490,7 @@ def threadLoop():
         detectTimeStart = time.time()
         imageLock.acquire()
         (img, rawPos , curAng, curDiam) = detectRobot(img)
+        #print("current angle: {}".format(curAng))
 #        if rawPos == None:
 #            (img, rawPos , curAng, curDiam) = detectRobot(img)
 #        else:
